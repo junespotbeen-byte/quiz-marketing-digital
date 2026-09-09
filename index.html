@@ -931,14 +931,13 @@
             document.getElementById('final-score-val').innerText = `${score} / ${currentQuestions.length}`;
             document.getElementById('final-time-val').innerText = `${timeUsed}s`;
 
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 80,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
-            }
-        }
+            if (score >= 5 && typeof confetti === 'function') {
+    confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+}
 
         function goToSetup() {
             gameActive = false;

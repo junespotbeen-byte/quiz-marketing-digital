@@ -789,7 +789,7 @@
             }
         }
 
-        function startQuiz(categoryKey) {
+        window.startQuiz = function(categoryKey) {
             selectedCategoryKey = categoryKey;
             const category = QUESTION_DATABASE[categoryKey];
             if (!category) return;

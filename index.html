@@ -200,7 +200,7 @@
 
             <!-- Barre de temps -->
             <div class="w-full bg-white border-2 border-cherryRed rounded-full h-3.5 p-0.5 overflow-hidden shadow-sm">
-                <div id="timer-bar" class="bg-cherryRed h-full w-full rounded-full transition-all duration-1000 ease-linear"></div>
+                <div id="timer-bar" class="bg-cherryRed h-full w-full rounded-full transition-[width] duration-1000 ease-linear"></div>
             </div>
 
             <!-- Boîte de Question -->
@@ -813,37 +813,60 @@
         }
 
         function startTimer() {
-            clearInterval(timerInterval);
-            updateTimerDisplay();
+    clearInterval(timerInterval);
 
-            timerInterval = setInterval(() => {
-                if (!gameActive) return;
-                timerSeconds--;
-                updateTimerDisplay();
+    const timerBar = document.getElementById('timer-bar');
+    const timerText = document.getElementById('timer-text');
 
-                if (timerSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    endQuiz();
-                }
-            }, 1000);
+    const startTime = Date.now();
+    const totalTime = 600000;
+
+    timerBar.style.width = '100%';
+
+    timerInterval = setInterval(() => {
+        if (!gameActive) return;
+
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, totalTime - elapsed);
+
+        timerSeconds = Math.ceil(remaining / 1000);
+        timerText.innerText = timerSeconds;
+
+        const percentage = (remaining / totalTime) * 100;
+        timerBar.style.width = `${percentage}%`;
+
+        if (timerSeconds <= 10) {
+            timerBar.classList.remove('bg-cherryRed');
+            timerBar.classList.add('bg-red-600');
+        } else {
+            timerBar.classList.remove('bg-red-600');
+            timerBar.classList.add('bg-cherryRed');
         }
+
+        if (remaining <= 0) {
+            clearInterval(timerInterval);
+            endQuiz();
+        }
+    }, 50);
+}
 
         function updateTimerDisplay() {
-            const timerText = document.getElementById('timer-text');
-            const timerBar = document.getElementById('timer-bar');
+    const timerText = document.getElementById('timer-text');
+    const timerBar = document.getElementById('timer-bar');
 
-            timerText.innerText = Math.max(0, timerSeconds);
-            const percentage = (Math.max(0, timerSeconds) / 60) * 100;
-            timerBar.style.width = `${percentage}%`;
+    timerText.innerText = Math.max(0, timerSeconds);
 
-            if (timerSeconds <= 10) {
-                timerBar.classList.remove('bg-cherryRed');
-                timerBar.classList.add('bg-red-600');
-            } else {
-                timerBar.classList.remove('bg-red-600');
-                timerBar.classList.add('bg-cherryRed');
-            }
-        }
+    const percentage = (Math.max(0, timerSeconds) / 600) * 100;
+    timerBar.style.width = `${percentage}%`;
+
+    if (timerSeconds <= 10) {
+        timerBar.classList.remove('bg-cherryRed');
+        timerBar.classList.add('bg-red-600');
+    } else {
+        timerBar.classList.remove('bg-red-600');
+        timerBar.classList.add('bg-cherryRed');
+    }
+}
 
         function renderQuestion() {
             if (currentQuestionIdx >= currentQuestions.length) {
@@ -899,7 +922,7 @@
             gameActive = false;
             clearInterval(timerInterval);
 
-            const timeUsed = 60 - Math.max(0, timerSeconds);
+            const timeUsed = 600 - Math.max(0, timerSeconds);
 
             document.getElementById('view-game').classList.add('hidden');
             document.getElementById('view-result').classList.remove('hidden');

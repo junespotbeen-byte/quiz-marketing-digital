@@ -954,9 +954,23 @@
         }
 
         function resetApp() {
-            setTeam(1);
-            goToSetup();
-        }
+    setTeam(1);
+    goToSetup();
+}
+
+function setupCardClicks() {
+    document.querySelectorAll('.card-dossier').forEach(card => {
+        card.addEventListener('click', () => {
+            startQuiz(card.dataset.category);
+        });
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCardClicks);
+} else {
+    setupCardClicks();
+}
     </script>
 </body>
 </html>

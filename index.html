@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Marketing Digital - Fête de la Science</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pop: ['Fredoka', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        cherryRed: '#C8102E',
+                        darkRed: '#99001C',
+                        bubblePink: '#FF7AA2',
+                        softPink: '#FFE4E6',
+                        creamPink: '#FFF0F3',
+                    },
+                    boxShadow: {
+                        'pop-red': '4px 4px 0px 0px #99001C',
+                        'pop-card': '6px 6px 0px 0px #C8102E',
+                        'pop-btn': '3px 3px 0px 0px #99001C',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: #FFE4E6;
+            background-image: radial-gradient(#C8102E 1.5px, transparent 1.5px), radial-gradient(#FF7AA2 1.5px, #FFE4E6 1.5px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        .font-pop {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .card-dossier {
+            background: #FFFFFF;
+            border: 3px solid #C8102E;
+            box-shadow: 6px 6px 0px 0px #C8102E;
+            transition: all 0.15s ease-in-out;
+            position: relative;
+        }
+
+        .card-dossier:active {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0px 0px #C8102E;
+        }
+
+        .quiz-option-btn {
+            background: #FFFFFF;
+            border: 3px solid #C8102E;
+            box-shadow: 4px 4px 0px 0px #C8102E;
+            transition: all 0.1s ease;
+        }
+
+        .quiz-option-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #C8102E;
+            background-color: #FFF0F3;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-900 flex flex-col justify-between items-center p-3 sm:p-6 min-h-screen">
+
+    <header class="w-full max-w-6xl flex justify-center items-center mb-4 sm:mb-6">
+        <div class="flex items-center gap-2 bg-white p-1.5 rounded-2xl border-3 border-cherryRed shadow-pop-red">
+            <button id="btn-team-1" onclick="setTeam(1)" class="px-4 py-2 rounded-xl font-pop font-bold text-xs sm:text-sm transition bg-cherryRed text-white shadow-pop-btn">
+                <i class="fa-solid fa-heart text-xs mr-1"></i> Équipe 1
+            </button>
+            <button id="btn-team-2" onclick="setTeam(2)" class="px-4 py-2 rounded-xl font-pop font-bold text-xs sm:text-sm transition text-cherryRed hover:bg-softPink">
+                Équipe 2
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl my-auto flex flex-col justify-center items-center">
+
+        <section id="view-setup" class="w-full space-y-6">
+            <div class="flex flex-col gap-6 sm:gap-8 w-full">
+                
+                <!-- Ligne 1 : 3 cartes -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 w-full">
+                    
+                    <button onclick="startQuiz('social')" class="card-dossier p-6 sm:p-8 rounded-3xl text-left flex flex-col justify-between h-52 sm:h-64">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-pop text-xs sm:text-sm font-bold uppercase text-white bg-cherryRed px-3.5 py-1.5 rounded-full border border-darkRed">
+                                Carte 1
+                            </span>
+                            <i class="fa-solid fa-hashtag text-cherryRed text-3xl sm:text-4xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-pop text-xl sm:text-2xl font-bold text-cherryRed">Réseaux Sociaux</h2>
+                            <p class="text-xs sm:text-base text-slate-700 mt-2 font-semibold leading-relaxed">Algorithmes, engagement & viralité des contenus.</p>
+                        </div>
+                    </button>
+
+                    <button onclick="startQuiz('crypto')" class="card-dossier p-6 sm:p-8 rounded-3xl text-left flex flex-col justify-between h-52 sm:h-64">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-pop text-xs sm:text-sm font-bold uppercase text-white bg-cherryRed px-3.5 py-1.5 rounded-full border border-darkRed">
+                                Carte 2
+                            </span>
+                            <i class="fa-solid fa-coins text-cherryRed text-3xl sm:text-4xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-pop text-xl sm:text-2xl font-bold text-cherryRed">Monnaies Virtuelles</h2>
+                            <p class="text-xs sm:text-base text-slate-700 mt-2 font-semibold leading-relaxed">Bitcoin, transactions, wallets & blockchain.</p>
+                        </div>
+                    </button>
+
+                    <button onclick="startQuiz('influencer')" class="card-dossier p-6 sm:p-8 rounded-3xl text-left flex flex-col justify-between h-52 sm:h-64">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-pop text-xs sm:text-sm font-bold uppercase text-white bg-cherryRed px-3.5 py-1.5 rounded-full border border-darkRed">
+                                Carte 3
+                            </span>
+                            <i class="fa-solid fa-bullhorn text-cherryRed text-3xl sm:text-4xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-pop text-xl sm:text-2xl font-bold text-cherryRed">Influenceurs</h2>
+                            <p class="text-xs sm:text-base text-slate-700 mt-2 font-semibold leading-relaxed">Sponsorings, placements de produits & règles.</p>
+                        </div>
+                    </button>
+
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 w-full sm:w-4/5 mx-auto">
+                    
+                    <button onclick="startQuiz('data')" class="card-dossier p-6 sm:p-8 rounded-3xl text-left flex flex-col justify-between h-52 sm:h-64">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-pop text-xs sm:text-sm font-bold uppercase text-white bg-cherryRed px-3.5 py-1.5 rounded-full border border-darkRed">
+                                Carte 4
+                            </span>
+                            <i class="fa-solid fa-user-shield text-cherryRed text-3xl sm:text-4xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-pop text-xl sm:text-2xl font-bold text-cherryRed">Données & Vie Privée</h2>
+                            <p class="text-xs sm:text-base text-slate-700 mt-2 font-semibold leading-relaxed">RGPD, cookies, cyber-sécurité & hameçonnage.</p>
+                        </div>
+                    </button>
+
+                    <button onclick="startQuiz('ecommerce')" class="card-dossier p-6 sm:p-8 rounded-3xl text-left flex flex-col justify-between h-52 sm:h-64">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-pop text-xs sm:text-sm font-bold uppercase text-white bg-cherryRed px-3.5 py-1.5 rounded-full border border-darkRed">
+                                Carte 5
+                            </span>
+                            <i class="fa-solid fa-cart-shopping text-cherryRed text-3xl sm:text-4xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-pop text-xl sm:text-2xl font-bold text-cherryRed">E-commerce</h2>
+                            <p class="text-xs sm:text-base text-slate-700 mt-2 font-semibold leading-relaxed">Vente en ligne, pièges (Dark patterns) & avis.</p>
+                        </div>
+                    </button>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section id="view-game" class="hidden w-full max-w-2xl space-y-4">
+            
+            <div class="bg-white border-3 border-cherryRed p-3.5 rounded-2xl shadow-pop-red flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-softPink border-2 border-cherryRed text-cherryRed flex items-center justify-center font-bold text-xl">
+                        <i id="game-theme-icon" class="fa-solid fa-hashtag"></i>
+                    </div>
+                    <div>
+                        <div id="game-player-display" class="font-pop text-xs font-bold text-cherryRed uppercase tracking-wider">Équipe 1</div>
+                        <div id="game-theme-title" class="font-pop text-slate-900 font-bold text-sm sm:text-base">Réseaux Sociaux</div>
+                    </div>
+                </div>
+
+                <!-- Timer 10min -->
+                <div class="flex items-center gap-1.5 bg-cherryRed text-white px-4 py-2 rounded-xl border-2 border-darkRed shadow-sm">
+                    <i class="fa-solid fa-clock text-bubblePink"></i>
+                    <span id="timer-text" class="font-mono text-2xl font-black">600</span>
+                    <span class="font-pop text-xs text-bubblePink font-bold">s</span>
+                </div>
+            </div>
+
+            <!-- Barre de temps -->
+            <div class="w-full bg-white border-2 border-cherryRed rounded-full h-3.5 p-0.5 overflow-hidden shadow-sm">
+                <div id="timer-bar" class="bg-cherryRed h-full w-full rounded-full transition-all duration-1000 ease-linear"></div>
+            </div>
+
+            <!-- Boîte de Question -->
+            <div class="bg-white border-3 border-cherryRed rounded-2xl p-5 sm:p-7 shadow-pop-card space-y-5">
+                
+                <div class="flex justify-between items-center font-pop text-xs font-bold text-slate-600 border-b-2 border-softPink pb-3">
+                    <span id="question-count-text" class="bg-softPink text-cherryRed px-3 py-1 rounded-md border border-cherryRed">Question 1 / 10</span>
+                    <span id="score-counter" class="text-cherryRed font-bold text-sm sm:text-base">Bonnes réponses : 0</span>
+                </div>
+
+                <h3 id="question-text" class="text-base sm:text-xl font-extrabold text-slate-900 leading-snug">
+                    Chargement...
+                </h3>
+
+                <div id="options-container" class="grid grid-cols-1 gap-3 pt-1">
+                </div>
+            </div>
+        </section>
+
+        <section id="view-result" class="hidden w-full max-w-lg text-center space-y-4">
+            <div class="bg-white border-3 border-cherryRed p-6 sm:p-8 rounded-3xl shadow-pop-card space-y-5 relative overflow-hidden">
+                
+                <div id="result-badge-icon" class="w-16 h-16 mx-auto rounded-2xl bg-cherryRed text-white border-2 border-darkRed flex items-center justify-center text-3xl font-black shadow-pop-btn">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <div>
+                    <h2 id="result-title" class="font-pop text-2xl sm:text-3xl font-bold text-cherryRed">
+                        Fin de la partie !
+                    </h2>
+                    <p id="result-subtitle" class="font-pop text-slate-600 font-bold text-xs sm:text-sm mt-1">
+                        Résultat pour l'Équipe 1
+                    </p>
+                </div>
+
+                <!-- Récapitulatif Score & Temps -->
+                <div class="bg-creamPink rounded-2xl p-4 border-2 border-cherryRed flex justify-around items-center">
+                    <div>
+                        <div class="font-pop text-[10px] sm:text-xs text-cherryRed font-bold uppercase">Bonnes réponses</div>
+                        <div id="final-score-val" class="font-pop text-2xl sm:text-3xl font-bold text-cherryRed">0 / 10</div>
+                    </div>
+                    <div class="h-10 w-0.5 bg-cherryRed"></div>
+                    <div>
+                        <div class="font-pop text-[10px] sm:text-xs text-slate-600 font-bold uppercase">Temps utilisé</div>
+                        <div id="final-time-val" class="font-pop text-2xl sm:text-3xl font-bold text-slate-800">600s</div>
+                    </div>
+                </div>
+
+                <button onclick="goToSetup()" class="w-full py-3.5 rounded-xl bg-cherryRed hover:bg-darkRed text-white font-pop font-bold text-sm tracking-wide transition shadow-pop-btn active:translate-y-0.5">
+                    Rejouer / Changer de carte
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <button onclick="resetApp()" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white text-cherryRed border-3 border-cherryRed font-pop font-bold text-xs sm:text-sm px-4 py-2.5 rounded-2xl flex items-center gap-2 shadow-pop-red active:translate-y-0.5 z-50">
+        <i class="fa-solid fa-rotate-left"></i> Reset
+    </button>
+
+    <script>
+        let currentTeam = 1;
+        let selectedCategoryKey = null;
+        let currentQuestions = [];
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let timerSeconds = 600;
+        let timerInterval = null;
+        let gameActive = false;
+
+        const QUESTION_DATABASE = {
+            social: {
+                title: "Réseaux Sociaux",
+                iconClass: "fa-hashtag",
+                questions: [
+                    {
+                        q: "Que mesure le 'Taux d'engagement' sur un réseau social ?",
+                        options: [
+                            "Le nombre total d'abonnés de la page",
+                            "Le pourcentage de personnes qui aiment, commentent ou partagent",
+                            "Le prix d'une publicité sponsorisée",
+                            "Le temps de charge de l'application"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Quel est le rôle principal de l'algorithme d'un réseau social ?",
+                        options: [
+                            "Supprimer les comptes inactifs",
+                            "Proposer du contenu pour retenir l'utilisateur le plus longtemps possible",
+                            "Économiser la batterie du smartphone",
+                            "Envoyer des emails de confirmation"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Shadowban' ?",
+                        options: [
+                            "Un piratage de compte bancaire",
+                            "Une réduction invisible de la visibilité d'un compte par la plateforme",
+                            "Le mode sombre automatique",
+                            "Un compte certifié officiel"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Que signifie créer du contenu 'Viral' ?",
+                        options: [
+                            "Transmettre un virus informatique",
+                            "Créer un contenu partagé très rapidement et à grande échelle",
+                            "Rédiger un article scientifique",
+                            "Publier une vidéo privée"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Call to Action' (CTA) ?",
+                        options: [
+                            "Un appel d'urgence au support",
+                            "Un bouton ou texte incitant l'utilisateur à agir (ex: 'Abonne-toi')",
+                            "Un numéro de téléphone sur une fiche",
+                            "Un signalement de bug"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "À quoi sert un hashtag (#) ?",
+                        options: [
+                            "À payer son abonnement",
+                            "À classer les publications par thème pour les retrouver facilement",
+                            "À bloquer les commentaires injurieux",
+                            "À augmenter la résolution des photos"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Que signifie le terme 'UGC' (User Generated Content) ?",
+                        options: [
+                            "Des contenus créés directement par les utilisateurs ou clients",
+                            "Des publicités créées par une grande agence",
+                            "Un format vidéo en très haute définition",
+                            "Un réglage de confidentialité"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Quel réseau social professionnel est principalement utilisé pour le recrutement ?",
+                        options: ["TikTok", "Snapchat", "LinkedIn", "Twitch"],
+                        correct: 2
+                    },
+                    {
+                        q: "Sur Instagram, qu'est-ce qu'une publication 'Carrousel' ?",
+                        options: [
+                            "Une photo de profil qui tourne",
+                            "Un post contenant plusieurs images ou vidéos à faire glisser",
+                            "Un filtre de réalité augmentée",
+                            "Un message privé de groupe"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Quelle est la principale différence entre une Story et un Post classique ?",
+                        options: [
+                            "La story est payante",
+                            "La story est temporaire (disparaît souvent après 24h)",
+                            "Le post classique ne peut pas contenir de vidéo",
+                            "Il n'y a aucune différence"
+                        ],
+                        correct: 1
+                    }
+                ]
+            },
+            crypto: {
+                title: "Monnaies Virtuelles",
+                iconClass: "fa-coins",
+                questions: [
+                    {
+                        q: "Quelle est la première crypto-monnaie décentralisée créée en 2009 ?",
+                        options: ["Ethereum", "Bitcoin", "Dogecoin", "Euro Numérique"],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que la 'Blockchain' ?",
+                        options: [
+                            "Un système de verrouillage d'écran",
+                            "Un registre numérique sécurisé et partagé enregistrant toutes les transactions",
+                            "Un jeu vidéo de construction",
+                            "Une banque physique internationale"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Où stocke-t-on de manière sécurisée ses crypto-monnaies ?",
+                        options: ["Dans un Wallet (Portefeuille virtuel)", "Sur une clé USB basique", "Sur son bureau d'ordinateur", "Dans ses mails"],
+                        correct: 0
+                    },
+                    {
+                        q: "Que signifie la forte 'Volatilité' d'une crypto-monnaie ?",
+                        options: [
+                            "Qu'elle peut disparaître en une heure",
+                            "Que son prix peut varier très fortement et rapidement",
+                            "Qu'elle est contrôlée par l'État",
+                            "Qu'elle ne s'utilise que sur mobile"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'NFT' (Non-Fungible Token) ?",
+                        options: [
+                            "Un jeton numérique unique certifiant la propriété d'un objet virtuel",
+                            "Un nouveau type de carte bancaire",
+                            "Un contrat de travail numérique",
+                            "Un logiciel d'antivirus"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Qu'est-ce que le 'Minage' de crypto-monnaie ?",
+                        options: [
+                            "Chercher du métal dans le sol",
+                            "Utiliser la puissance d'ordinateurs pour valider des transactions",
+                            "Acheter des devises à l'aéroport",
+                            "Créer un site web marchant"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Stablecoin' ?",
+                        options: [
+                            "Une crypto-monnaie adossée à une monnaie stable comme le Dollar ou l'Euro",
+                            "Une pièce de monnaie en métal",
+                            "Un compte d'épargne jeunesse",
+                            "Une crypto réservée aux banques"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Quelle information ne devez-vous JAMAIS partager sur votre portefeuille crypto ?",
+                        options: ["Votre clé privée (Phrase de récupération)", "Votre pseudo", "L'heure de connexion", "Votre pays"],
+                        correct: 0
+                    },
+                    {
+                        q: "Qui est le créateur mystérieux du Bitcoin ?",
+                        options: ["Satoshi Nakamoto", "Elon Musk", "Bill Gates", "Mark Zuckerberg"],
+                        correct: 0
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Smart Contract' ?",
+                        options: [
+                            "Un contrat en papier signé avec un stylo connecté",
+                            "Un programme informatique qui exécute automatiquement les termes d'un accord",
+                            "Un forfait téléphonique intelligent",
+                            "Un mot de passe sécurisé"
+                        ],
+                        correct: 1
+                    }
+                ]
+            },
+            influencer: {
+                title: "Influenceurs",
+                iconClass: "fa-bullhorn",
+                questions: [
+                    {
+                        q: "En France, quelle obligation a un influenceur lors d'un partenariat rémunéré ?",
+                        options: [
+                            "Aucune obligation",
+                            "Afficher clairement la mention 'Publicité' ou 'Collaboration commerciale'",
+                            "Payer la commande de ses abonnés",
+                            "Inviter la marque dans sa vidéo"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Micro-influenceur' ?",
+                        options: [
+                            "Un créateur qui traite de sujets microscopiques",
+                            "Un créateur avec une communauté réduite mais très engagée (10k à 100k)",
+                            "Un robot virtuel animé par IA",
+                            "Un influenceur de moins de 18 ans"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "À quoi sert un 'Code Promo' attribué à un influenceur ?",
+                        options: [
+                            "À débloquer des fonctionnalités sur son téléphone",
+                            "À offrir une réduction aux abonnés tout en mesurant les ventes générées",
+                            "À payer moins d'impôts",
+                            "À valider son compte officiel"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que l'Unboxing ?",
+                        options: [
+                            "Renvoyer un colis défectueux",
+                            "Se filmer en train de déballer un produit ou un colis",
+                            "Créer un emballage écologique",
+                            "Vendre des cartons de déménagement"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Bad Buzz' pour une marque ?",
+                        options: [
+                            "Un bruit de moustique dans une pub",
+                            "Une réclamation de client par téléphone",
+                            "Une vague de réactions négatives très rapide sur les réseaux sociaux",
+                            "Une panne de réseau internet"
+                        ],
+                        correct: 2
+                    },
+                    {
+                        q: "Que recherche principalement une marque en collaborant avec un influenceur ?",
+                        options: [
+                            "Accéder à une communauté ciblée et instaurer de la confiance",
+                            "Racheter le compte de l'influenceur",
+                            "Modifier le logo du créateur",
+                            "Lui prêter du matériel d'enregistrement"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Influenceur virtuel' ?",
+                        options: [
+                            "Un créateur qui ne répond jamais aux messages",
+                            "Un personnage fictif généré par ordinateur ou IA (ex: Lil Miquela)",
+                            "Un joueur de e-sport professionnel",
+                            "Un compte supprimé"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que le 'Placement de produit' ?",
+                        options: [
+                            "Mettre des objets en rayon dans un magasin",
+                            "Intégrer la présentation d'un produit dans une vidéo ou photo de créateur",
+                            "Ranger son bureau d'ordinateur",
+                            "Livrer un colis à domicile"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Quel rôle joue une agence d'influence (Talent Agency) ?",
+                        options: [
+                            "Gérer la carrière, les contrats et les négociations des créateurs",
+                            "Fabriquer des caméras de vidéo",
+                            "Gérer le réseau Wi-Fi des créateurs",
+                            "Vendre des ordinateurs"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Qu'est-ce que l'Audience d'un créateur ?",
+                        options: [
+                            "L'ensemble des personnes qui suivent ou regardent ses contenus",
+                            "Le studio d'enregistrement du créateur",
+                            "Les marques concurrentes",
+                            "La liste de ses amis proches"
+                        ],
+                        correct: 0
+                    }
+                ]
+            },
+            data: {
+                title: "Données & Vie Privée",
+                iconClass: "fa-user-shield",
+                questions: [
+                    {
+                        q: "Que signifie le sigle RGPD ?",
+                        options: [
+                            "Règlement Général sur la Protection des Données",
+                            "Réseau Global de Protection Digitale",
+                            "Registre Général des Profils Déclarés",
+                            "Règlement de Gestion Privée des Documents"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Qu'est-ce qu'un 'Cookie' informatique ?",
+                        options: [
+                            "Un biscuit virtuel à gagner sur les jeux",
+                            "Un petit fichier texte déposé sur votre appareil pour mémoriser vos préférences",
+                            "Un logiciel de nettoyage de disque",
+                            "Une erreur de serveur web"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que le 'Phishing' (Hameçonnage) ?",
+                        options: [
+                            "Un jeu vidéo de pêche en ligne",
+                            "Une technique frauduleuse pour vous voler des mots de passe ou données bancaires",
+                            "Une méthode de recherche sur Google",
+                            "Un nettoyage automatique de boîte mail"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Quelle est la meilleure règle pour créer un mot de passe solide ?",
+                        options: [
+                            "Utiliser '123456' ou sa date de naissance",
+                            "Mélanger lettres majuscules/minuscules, chiffres et symboles",
+                            "Utiliser le même mot de passe partout",
+                            "Écrire son mot de passe sur un post-it collé à l'écran"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "À quoi sert la 'Double Authentification' (2FA) ?",
+                        options: [
+                            "À payer deux fois sa facture",
+                            "À ajouter une étape de sécurité supplémentaire (ex: code reçu par SMS)",
+                            "À créer deux comptes en même temps",
+                            "À diviser par deux le temps de connexion"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "En France, quelle autorité veille à la protection des données personnelles ?",
+                        options: ["La CNIL", "L'Arcep", "La SACEM", "L'HADOPI"],
+                        correct: 0
+                    },
+                    {
+                        q: "Qu'est-ce que l'Empreinte Numérique ?",
+                        options: [
+                            "L'empreinte digitale pour déverrouiller son smartphone",
+                            "L'ensemble des traces laissées en ligne par nos activités et recherches",
+                            "Le poids total d'un disque dur",
+                            "La vitesse de connexion de sa box internet"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Que garantit la présence d'un cadenas et du protocole 'HTTPS' sur un site web ?",
+                        options: [
+                            "Que le site est totalement gratuit",
+                            "Que la connexion entre votre navigateur et le site est sécurisée et cryptée",
+                            "Que le site appartient au gouvernement",
+                            "Que les produits sont livrés sous 24h"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Pourquoi faut-il se méfier des réseaux Wi-Fi publics non sécurisés ?",
+                        options: [
+                            "Ils font griller la batterie",
+                            "Des pirates peuvent intercepter vos informations personnelles en transit",
+                            "Ils font perdre les photos enregistrées",
+                            "Ils modifient la langue du smartphone"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "À quoi sert un VPN (Virtual Private Network) ?",
+                        options: [
+                            "À accélérer le téléchargement des films",
+                            "À chiffrer sa connexion et masquer son adresse IP",
+                            "À bloquer les appels téléphoniques inconnus",
+                            "À augmenter le stockage iCloud"
+                        ],
+                        correct: 1
+                    }
+                ]
+            },
+            ecommerce: {
+                title: "E-commerce",
+                iconClass: "fa-cart-shopping",
+                questions: [
+                    {
+                        q: "Qu'est-ce qu'un 'Dark Pattern' en e-commerce ?",
+                        options: [
+                            "Le mode nuit du site marchand",
+                            "Une interface conçue pour tromper ou inciter l'utilisateur à acheter involontairement",
+                            "Un produit d'occasion vendu sans garantie",
+                            "Une erreur de code d'affichage"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que le 'Dropshipping' ?",
+                        options: [
+                            "Livrer des colis par drone",
+                            "Vendre un produit dont le vendeur ne possède pas le stock (livré directement par le fournisseur)",
+                            "Bénéficier de remises immédiates en caisse",
+                            "Acheter des produits par lots"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'une 'Marketplace' (Place de marché) ?",
+                        options: [
+                            "Un marché de fruits et légumes local",
+                            "Une plateforme qui permet à des vendeurs tiers de vendre leurs produits (ex: Amazon)",
+                            "Un logiciel de comptabilité",
+                            "Un magasin physique éphémère"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Que désigne l'Abandon de Panier ?",
+                        options: [
+                            "Oublier un sac de courses au supermarché",
+                            "Ajouter des produits dans son panier en ligne puis quitter le site sans payer",
+                            "Supprimer son compte client",
+                            "Demander le remboursement d'un article"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "En France, quel est le délai légal minimum de rétractation pour un achat en ligne ?",
+                        options: ["2 jours", "14 jours", "30 jours", "Aucun droit de rétractation"],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que le Retargeting (Ciblage publicitaire) ?",
+                        options: [
+                            "Afficher des pubs pour un produit que vous avez consulté précédemment sur d'autres sites",
+                            "Envoyer des SMS à toute la ville",
+                            "Bloquer la pub sur YouTube",
+                            "Offrir une carte de fidélité automatique"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Comment s'assurer de la fiabilité d'un site marchand inconnu ?",
+                        options: [
+                            "Vérifier les mentions légales, l'adresse, les avis clients et le cadenas HTTPS",
+                            "Regarder uniquement si les prix sont très bas",
+                            "Se fier uniquement au logo affiché en haut de page",
+                            "Il n'existe aucun moyen de vérifier"
+                        ],
+                        correct: 0
+                    },
+                    {
+                        q: "Pourquoi est-il important de consulter plusieurs avis clients vérifiés ?",
+                        options: [
+                            "Pour apprendre l'orthographe des clients",
+                            "Pour éviter les faux avis positifs et évaluer la vraie qualité du produit/service",
+                            "Pour connaître le nom des livreurs",
+                            "Pour gagner des réductions"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce qu'une 'Vente Flash' ?",
+                        options: [
+                            "Une vente d'appareils photo",
+                            "Une promotion très avantageuse proposée pendant une durée très limitée",
+                            "Une vente réservée aux professionnels",
+                            "Une vente réalisée en direct sur TikTok"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        q: "Qu'est-ce que le 'Click & Collect' ?",
+                        options: [
+                            "Cliquer sur une pub puis recevoir un appel",
+                            "Commander en ligne puis récupérer son produit directement en magasin",
+                            "Payer par carte sans contact",
+                            "Consulter un catalogue papier"
+                        ],
+                        correct: 1
+                    }
+                ]
+            }
+        };
+
+        function setTeam(teamNum) {
+            currentTeam = teamNum;
+            const btn1 = document.getElementById('btn-team-1');
+            const btn2 = document.getElementById('btn-team-2');
+
+            if (teamNum === 1) {
+                btn1.className = "px-4 py-2 rounded-xl font-pop font-bold text-xs sm:text-sm transition bg-cherryRed text-white shadow-pop-btn";
+                btn1.innerHTML = `<i class="fa-solid fa-heart text-xs mr-1"></i> Équipe 1`;
+                
+                btn2.className = "px-4 py-2 rounded-xl font-pop font-bold text-xs sm:text-sm transition text-cherryRed hover:bg-softPink";
+                btn2.innerHTML = `Équipe 2`;
+            } else {
+                btn2.className = "px-4 py-2 rounded-xl font-pop font-bold text-xs sm:text-sm transition bg-cherryRed text-white shadow-pop-btn";
+                btn2.innerHTML = `<i class="fa-solid fa-heart text-xs mr-1"></i> Équipe 2`;
+                
+                btn1.className = "px-4 py-2 rounded-xl font-pop font-bold text-xs sm:text-sm transition text-cherryRed hover:bg-softPink";
+                btn1.innerHTML = `Équipe 1`;
+            }
+        }
+
+        function startQuiz(categoryKey) {
+            selectedCategoryKey = categoryKey;
+            const category = QUESTION_DATABASE[categoryKey];
+            if (!category) return;
+
+            currentQuestions = [...category.questions].sort(() => Math.random() - 0.5);
+            currentQuestionIdx = 0;
+            score = 0;
+            timerSeconds = 600;
+            gameActive = true;
+
+            document.getElementById('game-theme-icon').className = `fa-solid ${category.iconClass}`;
+            document.getElementById('game-theme-title').innerText = category.title;
+            document.getElementById('game-player-display').innerText = `Équipe ${currentTeam}`;
+
+            document.getElementById('view-setup').classList.add('hidden');
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+
+            renderQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                if (!gameActive) return;
+                timerSeconds--;
+                updateTimerDisplay();
+
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerText = document.getElementById('timer-text');
+            const timerBar = document.getElementById('timer-bar');
+
+            timerText.innerText = Math.max(0, timerSeconds);
+            const percentage = (Math.max(0, timerSeconds) / 60) * 100;
+            timerBar.style.width = `${percentage}%`;
+
+            if (timerSeconds <= 10) {
+                timerBar.classList.remove('bg-cherryRed');
+                timerBar.classList.add('bg-red-600');
+            } else {
+                timerBar.classList.remove('bg-red-600');
+                timerBar.classList.add('bg-cherryRed');
+            }
+        }
+
+        function renderQuestion() {
+            if (currentQuestionIdx >= currentQuestions.length) {
+                endQuiz();
+                return;
+            }
+
+            const qData = currentQuestions[currentQuestionIdx];
+            document.getElementById('question-count-text').innerText = `Question ${currentQuestionIdx + 1} / ${currentQuestions.length}`;
+            document.getElementById('score-counter').innerText = `Bonnes réponses : ${score}`;
+            document.getElementById('question-text').innerText = qData.q;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+
+            qData.options.forEach((optionText, idx) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => handleAnswer(idx);
+                btn.className = "quiz-option-btn w-full p-3.5 sm:p-4 rounded-xl text-left flex items-center gap-3 active:scale-[0.99] transition";
+                
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg bg-softPink border border-cherryRed text-cherryRed font-pop font-bold text-sm flex items-center justify-center shrink-0">
+                        ${prefixes[idx]}
+                    </span>
+                    <span class="font-semibold text-slate-800 text-xs sm:text-base leading-snug">
+                        ${optionText}
+                    </span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIndex) {
+            if (!gameActive) return;
+
+            const qData = currentQuestions[currentQuestionIdx];
+            if (selectedIndex === qData.correct) {
+                score++;
+            }
+
+            currentQuestionIdx++;
+
+            if (currentQuestionIdx < currentQuestions.length) {
+                renderQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            gameActive = false;
+            clearInterval(timerInterval);
+
+            const timeUsed = 60 - Math.max(0, timerSeconds);
+
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-result').classList.remove('hidden');
+
+            document.getElementById('result-subtitle').innerText = `Résultat final pour l'Équipe ${currentTeam}`;
+            document.getElementById('final-score-val').innerText = `${score} / ${currentQuestions.length}`;
+            document.getElementById('final-time-val').innerText = `${timeUsed}s`;
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function goToSetup() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-setup').classList.remove('hidden');
+        }
+
+        function resetApp() {
+            setTeam(1);
+            goToSetup();
+        }
+    </script>
+</body>
+</html>

@@ -249,10 +249,12 @@
                     </div>
                 </div>
 
-                <button onclick="goToSetup()" class="w-full py-3.5 rounded-xl bg-cherryRed hover:bg-darkRed text-white font-pop font-bold text-sm tracking-wide transition shadow-pop-btn active:translate-y-0.5">
-                    Rejouer / Changer de carte
-                </button>
-            </div>
+                <div id="correction-container" class="text-left space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+</div>
+
+<button onclick="goToSetup()" class="w-full py-3.5 rounded-xl bg-cherryRed hover:bg-darkRed text-white font-pop font-bold text-sm tracking-wide transition shadow-pop-btn active:translate-y-0.5">
+    Rejouer / Changer de carte
+</button>
         </section>
 
     </main>
@@ -270,503 +272,606 @@
         let timerSeconds = 600;
         let timerInterval = null;
         let gameActive = false;
+        let playerAnswers = [];
 
         const QUESTION_DATABASE = {
             social: {
-                title: "Réseaux Sociaux",
-                iconClass: "fa-hashtag",
-                questions: [
-                    {
-                        q: "Que mesure le 'Taux d'engagement' sur un réseau social ?",
-                        options: [
-                            "Le nombre total d'abonnés de la page",
-                            "Le pourcentage de personnes qui aiment, commentent ou partagent",
-                            "Le prix d'une publicité sponsorisée",
-                            "Le temps de charge de l'application"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Quel est le rôle principal de l'algorithme d'un réseau social ?",
-                        options: [
-                            "Supprimer les comptes inactifs",
-                            "Proposer du contenu pour retenir l'utilisateur le plus longtemps possible",
-                            "Économiser la batterie du smartphone",
-                            "Envoyer des emails de confirmation"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Shadowban' ?",
-                        options: [
-                            "Un piratage de compte bancaire",
-                            "Une réduction invisible de la visibilité d'un compte par la plateforme",
-                            "Le mode sombre automatique",
-                            "Un compte certifié officiel"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Que signifie créer du contenu 'Viral' ?",
-                        options: [
-                            "Transmettre un virus informatique",
-                            "Créer un contenu partagé très rapidement et à grande échelle",
-                            "Rédiger un article scientifique",
-                            "Publier une vidéo privée"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Call to Action' (CTA) ?",
-                        options: [
-                            "Un appel d'urgence au support",
-                            "Un bouton ou texte incitant l'utilisateur à agir (ex: 'Abonne-toi')",
-                            "Un numéro de téléphone sur une fiche",
-                            "Un signalement de bug"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "À quoi sert un hashtag (#) ?",
-                        options: [
-                            "À payer son abonnement",
-                            "À classer les publications par thème pour les retrouver facilement",
-                            "À bloquer les commentaires injurieux",
-                            "À augmenter la résolution des photos"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Que signifie le terme 'UGC' (User Generated Content) ?",
-                        options: [
-                            "Des contenus créés directement par les utilisateurs ou clients",
-                            "Des publicités créées par une grande agence",
-                            "Un format vidéo en très haute définition",
-                            "Un réglage de confidentialité"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Quel réseau social professionnel est principalement utilisé pour le recrutement ?",
-                        options: ["TikTok", "Snapchat", "LinkedIn", "Twitch"],
-                        correct: 2
-                    },
-                    {
-                        q: "Sur Instagram, qu'est-ce qu'une publication 'Carrousel' ?",
-                        options: [
-                            "Une photo de profil qui tourne",
-                            "Un post contenant plusieurs images ou vidéos à faire glisser",
-                            "Un filtre de réalité augmentée",
-                            "Un message privé de groupe"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Quelle est la principale différence entre une Story et un Post classique ?",
-                        options: [
-                            "La story est payante",
-                            "La story est temporaire (disparaît souvent après 24h)",
-                            "Le post classique ne peut pas contenir de vidéo",
-                            "Il n'y a aucune différence"
-                        ],
-                        correct: 1
-                    }
-                ]
-            },
-            crypto: {
-                title: "Monnaies Virtuelles",
-                iconClass: "fa-coins",
-                questions: [
-                    {
-                        q: "Quelle est la première crypto-monnaie décentralisée créée en 2009 ?",
-                        options: ["Ethereum", "Bitcoin", "Dogecoin", "Euro Numérique"],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que la 'Blockchain' ?",
-                        options: [
-                            "Un système de verrouillage d'écran",
-                            "Un registre numérique sécurisé et partagé enregistrant toutes les transactions",
-                            "Un jeu vidéo de construction",
-                            "Une banque physique internationale"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Où stocke-t-on de manière sécurisée ses crypto-monnaies ?",
-                        options: ["Dans un Wallet (Portefeuille virtuel)", "Sur une clé USB basique", "Sur son bureau d'ordinateur", "Dans ses mails"],
-                        correct: 0
-                    },
-                    {
-                        q: "Que signifie la forte 'Volatilité' d'une crypto-monnaie ?",
-                        options: [
-                            "Qu'elle peut disparaître en une heure",
-                            "Que son prix peut varier très fortement et rapidement",
-                            "Qu'elle est contrôlée par l'État",
-                            "Qu'elle ne s'utilise que sur mobile"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'NFT' (Non-Fungible Token) ?",
-                        options: [
-                            "Un jeton numérique unique certifiant la propriété d'un objet virtuel",
-                            "Un nouveau type de carte bancaire",
-                            "Un contrat de travail numérique",
-                            "Un logiciel d'antivirus"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Qu'est-ce que le 'Minage' de crypto-monnaie ?",
-                        options: [
-                            "Chercher du métal dans le sol",
-                            "Utiliser la puissance d'ordinateurs pour valider des transactions",
-                            "Acheter des devises à l'aéroport",
-                            "Créer un site web marchant"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Stablecoin' ?",
-                        options: [
-                            "Une crypto-monnaie adossée à une monnaie stable comme le Dollar ou l'Euro",
-                            "Une pièce de monnaie en métal",
-                            "Un compte d'épargne jeunesse",
-                            "Une crypto réservée aux banques"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Quelle information ne devez-vous JAMAIS partager sur votre portefeuille crypto ?",
-                        options: ["Votre clé privée (Phrase de récupération)", "Votre pseudo", "L'heure de connexion", "Votre pays"],
-                        correct: 0
-                    },
-                    {
-                        q: "Qui est le créateur mystérieux du Bitcoin ?",
-                        options: ["Satoshi Nakamoto", "Elon Musk", "Bill Gates", "Mark Zuckerberg"],
-                        correct: 0
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Smart Contract' ?",
-                        options: [
-                            "Un contrat en papier signé avec un stylo connecté",
-                            "Un programme informatique qui exécute automatiquement les termes d'un accord",
-                            "Un forfait téléphonique intelligent",
-                            "Un mot de passe sécurisé"
-                        ],
-                        correct: 1
-                    }
-                ]
-            },
+    title: "Réseaux Sociaux",
+    iconClass: "fa-hashtag",
+    questions: [
+        {
+            q: "Sur TikTok, qu'appelle-t-on une « Trend » ?",
+            options: [
+                "Un bug qui fait fermer l'application",
+                "Un message privé envoyé à tout son répertoire",
+                "Une option payante pour avoir plus d'abonnés",
+                "Un concept, une danse ou un son repris par des milliers d'utilisateurs"
+            ],
+            correct: 3,
+            explanation: "Une Trend est un concept, une danse, un son ou un format repris par de nombreux utilisateurs sur un réseau social."
+        },
+        {
+            q: "Quand tu vois la mention « Collaboration commerciale » ou « Sponsoring » sous la vidéo d'un créateur, qu'est-ce que cela signifie ?",
+            options: [
+                "Que le créateur adore la marque et en parle gratuitement",
+                "Qu'une marque a payé le créateur pour présenter ou vanter son produit",
+                "Que la vidéo a été réalisée par une classe d'école",
+                "Que le produit est gratuit pour tous les abonnés"
+            ],
+            correct: 1,
+            explanation: "Cette mention indique qu'il existe une collaboration commerciale entre le créateur et une marque."
+        },
+        {
+            q: "Tu cherches des baskets sur Google, et 5 minutes plus tard, tu vois la pub pour ces MÊMES baskets sur Insta ou TikTok. Comment la marque a-t-elle fait ?",
+            options: [
+                "C'est du hasard",
+                "Grâce aux cookies qui ont suivi ta navigation d'un site à l'autre",
+                "La marque a piraté ton téléphone",
+                "Quelqu'un a prévenu la marque par message"
+            ],
+            correct: 1,
+            explanation: "Les cookies sont de petits fichiers qui enregistrent tes traces sur le web. Les marques les utilisent pour te « recibler » (retargeting) avec le produit exact que tu viens de regarder."
+        },
+        {
+            q: "Dans une vidéo, un vidéaste boit une canette d'une marque très connue, bien en face de la caméra, sans en parler. Comment s'appelle cette technique marketing ?",
+            options: [
+                "Une erreur de cadrage",
+                "Du placement de produit passif",
+                "Un bug d'affichage",
+                "Une pause boisson"
+            ],
+            correct: 1,
+            explanation: "Même sans dire un mot, montrer un logo ou un objet de façon répétée et visible active notre cerveau inconscient pour nous rendre la marque familière."
+        },
+        {
+            q: "Sur un site de vêtements, un pantalon baggy indique : « Plus que 2 articles en stock ! 12 personnes ont ce produit dans leur panier ». Quelle technique marketing est utilisée ?",
+            options: [
+                "La stratégie d'honnêteté",
+                "Un problème de gestion des stocks",
+                "La création d'un sentiment d'urgence pour te faire acheter sans réfléchir",
+                "Une obligation légale d'information"
+            ],
+            correct: 2,
+            explanation: "C'est de la psychologie comportementale. En te faisant croire que le produit va disparaître, la marque déclenche la peur de rater une opportunité pour bloquer ton temps de réflexion. C'est du marketing d'urgence."
+        },
+        {
+            q: "À la fin d'une vidéo marketing, on te dit toujours : « Clique sur le lien en bio » ou « Abonne-toi ! ». En marketing digital, comment appelle-t-on cette phrase clé ?",
+            options: [
+                "Un « Call to Action » (Appel à l'action)",
+                "Un résumé de texte",
+                "Une signature automatique",
+                "Un mot de passe"
+            ],
+            correct: 0,
+            explanation: "Le CTA (Call To Action) donne une instruction très directe. Sans cette consigne explicite, plus de 80 % des gens quittent la page sans rien faire."
+        },
+        {
+            q: "En marketing digital, que veut dire le terme « Taux de conversion » ?",
+            options: [
+                "Le pourcentage de visiteurs d'un site qui réalisent l'action recherchée (acheter, s'inscrire, télécharger)",
+                "La vitesse à laquelle une vidéo charge sur téléphone",
+                "La conversion des euros en dollars sur un site web",
+                "Le nombre d'abonnés gagnés par jour"
+            ],
+            correct: 0,
+            explanation: "Avoir 100 000 vues ne sert à rien si personne n'achète. Le taux de conversion mesure l'efficacité réelle d'une campagne (ex : 100 visiteurs → 3 acheteurs = 3 % de conversion)."
+        },
+        {
+            q: "Aujourd'hui, les marques utilisent beaucoup de vidéos « UGC » qui ressemblent à des avis spontanés filmés au smartphone par des personnes ordinaires. Pourquoi ?",
+            options: [
+                "Parce qu'elles n'ont plus le budget pour payer des acteurs",
+                "Parce que les jeunes font plus confiance à de « vrais gens » qu'à des publicités traditionnelles",
+                "Parce que les caméras pro sont interdites sur TikTok",
+                "Pour économiser de la batterie"
+            ],
+            correct: 1,
+            explanation: "L'UGC (User Generated Content) casse les codes de la pub classique. Ça ressemble à un conseil d'un ami, ce qui lève la méfiance naturelle des consommateurs."
+        },
+        {
+            q: "Quand une marque fait tout pour apparaître dans les premiers résultats sur Google quand tu tapes « meilleure gourde de sport », quelle stratégie utilise-t-elle ?",
+            options: [
+                "Le SEO (référencement naturel)",
+                "Le Wi-Fi haute vitesse",
+                "Le spamming de mails",
+                "Le codage binaire"
+            ],
+            correct: 0,
+            explanation: "Le SEO (Search Engine Optimization) consiste à optimiser son site pour que les moteurs de recherche le placent au sommet. Plus de 60 % des clics se font sur les trois premiers résultats."
+        },
+        {
+            q: "Avant de lancer une campagne, une agence marketing crée le portrait-robot fictif du client idéal (âge, hobbies, problèmes, budget) qu'elle nomme par exemple « Lucas, 17 ans, fan de gaming ». Comment s'appelle ce modèle ?",
+            options: [
+                "Un Profil test",
+                "Un Avatar 3D",
+                "Un NPC (Non-Player Character)",
+                "Un Persona (ou Buyer Persona)"
+            ],
+            correct: 0,
+            explanation: "Le Persona permet aux équipes marketing de se mettre à la place exacte de leur cible pour adapter le ton, les visuels et les réseaux sociaux sur lesquels publier."
+        }
+    ]
+},
             influencer: {
-                title: "Influenceurs",
-                iconClass: "fa-bullhorn",
-                questions: [
-                    {
-                        q: "En France, quelle obligation a un influenceur lors d'un partenariat rémunéré ?",
-                        options: [
-                            "Aucune obligation",
-                            "Afficher clairement la mention 'Publicité' ou 'Collaboration commerciale'",
-                            "Payer la commande de ses abonnés",
-                            "Inviter la marque dans sa vidéo"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Micro-influenceur' ?",
-                        options: [
-                            "Un créateur qui traite de sujets microscopiques",
-                            "Un créateur avec une communauté réduite mais très engagée (10k à 100k)",
-                            "Un robot virtuel animé par IA",
-                            "Un influenceur de moins de 18 ans"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "À quoi sert un 'Code Promo' attribué à un influenceur ?",
-                        options: [
-                            "À débloquer des fonctionnalités sur son téléphone",
-                            "À offrir une réduction aux abonnés tout en mesurant les ventes générées",
-                            "À payer moins d'impôts",
-                            "À valider son compte officiel"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que l'Unboxing ?",
-                        options: [
-                            "Renvoyer un colis défectueux",
-                            "Se filmer en train de déballer un produit ou un colis",
-                            "Créer un emballage écologique",
-                            "Vendre des cartons de déménagement"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Bad Buzz' pour une marque ?",
-                        options: [
-                            "Un bruit de moustique dans une pub",
-                            "Une réclamation de client par téléphone",
-                            "Une vague de réactions négatives très rapide sur les réseaux sociaux",
-                            "Une panne de réseau internet"
-                        ],
-                        correct: 2
-                    },
-                    {
-                        q: "Que recherche principalement une marque en collaborant avec un influenceur ?",
-                        options: [
-                            "Accéder à une communauté ciblée et instaurer de la confiance",
-                            "Racheter le compte de l'influenceur",
-                            "Modifier le logo du créateur",
-                            "Lui prêter du matériel d'enregistrement"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Influenceur virtuel' ?",
-                        options: [
-                            "Un créateur qui ne répond jamais aux messages",
-                            "Un personnage fictif généré par ordinateur ou IA (ex: Lil Miquela)",
-                            "Un joueur de e-sport professionnel",
-                            "Un compte supprimé"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que le 'Placement de produit' ?",
-                        options: [
-                            "Mettre des objets en rayon dans un magasin",
-                            "Intégrer la présentation d'un produit dans une vidéo ou photo de créateur",
-                            "Ranger son bureau d'ordinateur",
-                            "Livrer un colis à domicile"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Quel rôle joue une agence d'influence (Talent Agency) ?",
-                        options: [
-                            "Gérer la carrière, les contrats et les négociations des créateurs",
-                            "Fabriquer des caméras de vidéo",
-                            "Gérer le réseau Wi-Fi des créateurs",
-                            "Vendre des ordinateurs"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Qu'est-ce que l'Audience d'un créateur ?",
-                        options: [
-                            "L'ensemble des personnes qui suivent ou regardent ses contenus",
-                            "Le studio d'enregistrement du créateur",
-                            "Les marques concurrentes",
-                            "La liste de ses amis proches"
-                        ],
-                        correct: 0
-                    }
-                ]
-            },
+    title: "Influenceurs",
+    iconClass: "fa-user-group",
+    questions: [
+        {
+            q: "Sur TikTok, Instagram ou YouTube, qu'est-ce qu'un influenceur ?",
+            options: [
+                "Une personne qui crée du contenu et peut influencer les choix de sa communauté",
+                "Une personne qui contrôle l'algorithme du réseau social",
+                "Une personne qui travaille obligatoirement pour une marque",
+                "Une personne qui possède forcément plus d'un million d'abonnés"
+            ],
+            correct: 0,
+            explanation: "Un influenceur crée du contenu et possède une communauté qui peut être influencée dans ses opinions, ses envies ou ses achats. Il n'a pas besoin d'avoir des millions d'abonnés."
+        },
+        {
+            q: "Un influenceur doit forcément avoir plus de 100 000 abonnés pour intéresser une marque. Vrai ou faux ?",
+            options: [
+                "Vrai",
+                "Faux",
+                "Cela dépend uniquement de son nombre de vues",
+                "Cela dépend uniquement du réseau social"
+            ],
+            correct: 1,
+            explanation: "Une petite communauté peut être très intéressante si elle est active et correspond exactement à la cible de la marque. C'est notamment le cas des micro-influenceurs."
+        },
+        {
+            q: "Une marque demande à un influenceur de présenter son nouveau produit sur Instagram. Quel est l'objectif principal de la marque ?",
+            options: [
+                "Toucher la communauté de l'influenceur",
+                "Augmenter automatiquement ses ventes",
+                "Remplacer sa publicité traditionnelle",
+                "Faire gagner des abonnés à l'influenceur"
+            ],
+            correct: 0,
+            explanation: "Parce que l'influenceur permet à la marque de toucher directement sa communauté et de faire connaître son produit."
+        },
+        {
+            q: "Que signifie « contenu sponsorisé » lorsqu'un influenceur présente un produit ?",
+            options: [
+                "Le produit est automatiquement gratuit pour ses abonnés",
+                "La vidéo a été créée par le réseau social",
+                "Le créateur réalise une promotion en collaboration avec une marque",
+                "L'influenceur possède obligatoirement la marque"
+            ],
+            correct: 2,
+            explanation: "Un contenu sponsorisé correspond à une collaboration commerciale : une marque rémunère ou fournit généralement quelque chose au créateur en échange de la promotion du produit ou du service."
+        },
+        {
+            q: "Une marque de baskets veut lancer une campagne auprès des adolescents qui aiment le sport. Elle hésite entre deux influenceurs : Influenceur A : 2 millions d'abonnés, dont une partie s'intéresse au sport. Influenceur B : 50 000 abonnés, avec une communauté principalement intéressée par le running. La marque cherche surtout à faire connaître ses nouvelles baskets auprès de sa cible. Quel choix semble le plus pertinent ?",
+            options: [
+                "L'influenceur A, car il permet de toucher beaucoup plus de personnes",
+                "L'influenceur B, car son audience est plus spécialisée dans le sport",
+                "L'influenceur A, car une grande communauté garantit que la campagne sera plus efficace",
+                "Les deux peuvent être intéressants : le choix dépend notamment de la cible et des objectifs de la campagne"
+            ],
+            correct: 3,
+            explanation: "Le nombre d'abonnés et le thème de la communauté sont importants, mais aucun ne suffit à lui seul. La marque doit aussi regarder l'âge de l'audience, son engagement, le type de contenu et son objectif. Elle pourrait même choisir B pour une audience très ciblée ou A pour obtenir davantage de visibilité."
+        },
+        {
+            q: "Tu fais défiler ton fil Instagram et tu vois cette publication : « J'ai testé ces nouvelles baskets pendant une semaine… elles sont incroyables ! Retrouvez-les avec mon code : LUCAS10 » #ad. La marque a demandé à l'influenceur de publier cette vidéo. Que peut-on comprendre grâce à cette publication ?",
+            options: [
+                "L'influenceur a forcément acheté les baskets lui-même",
+                "Le code permet uniquement aux abonnés d'obtenir une réduction",
+                "La publication fait probablement partie d'une collaboration commerciale",
+                "Le hashtag #ad signifie que la vidéo a été créée automatiquement par Instagram"
+            ],
+            correct: 2,
+            explanation: "Le hashtag #ad indique généralement qu'il s'agit d'un contenu publicitaire ou sponsorisé. Le code promo peut également permettre à la marque de suivre les ventes générées par la publication."
+        },
+        {
+            q: "Un influenceur peut avoir beaucoup moins d'abonnés qu'un autre et pourtant générer davantage de ventes pour une marque.",
+            options: [
+                "Vrai",
+                "Faux",
+                "Uniquement si l'influenceur possède plus d'un million d'abonnés",
+                "Uniquement si la marque augmente son budget publicitaire"
+            ],
+            correct: 0,
+            explanation: "Le nombre d'abonnés ne suffit pas à mesurer l'efficacité d'un influenceur. Une communauté plus petite mais très intéressée par le produit peut générer davantage de clics ou d'achats."
+        },
+        {
+    q: "Une marque lance une campagne avec un influenceur. Après une semaine, elle obtient 300 000 vues, 15 000 likes, 2 500 clics vers son site et 120 achats. Si la marque veut savoir si la campagne a réellement généré des clients, quelle donnée doit-elle regarder en priorité ?",
+    options: [
+        "Le nombre de vues de la vidéo",
+        "Le nombre de likes sur la publication",
+        "Le nombre de clics vers le site",
+        "Le nombre d'achats réalisés"
+    ],
+    correct: 3,
+    explanation: "Le nombre d'achats montre directement combien de clients ont réalisé un achat après la campagne. Les vues et les likes mesurent surtout la visibilité et l'engagement, tandis que les clics montrent l'intérêt pour le site."
+},
+        {
+            q: "Un influenceur très suivi publie une vidéo pour une marque. La vidéo devient rapidement virale, mais de nombreux internautes critiquent le produit dans les commentaires. La marque constate que son produit est maintenant beaucoup plus connu, mais que son image se dégrade sur les réseaux sociaux. Quel risque cette situation illustre-t-elle principalement ?",
+            options: [
+                "Une augmentation du taux d'engagement",
+                "Un risque de bad buzz pouvant nuire à l'image de la marque",
+                "Une baisse automatique du nombre d'abonnés de l'influenceur",
+                "Une impossibilité pour la marque de communiquer à nouveau sur les réseaux sociaux"
+            ],
+            correct: 1,
+            explanation: "Une campagne très visible n'est pas forcément positive. Si les réactions sont majoritairement négatives, la viralité peut amplifier une mauvaise image de la marque. C'est ce qu'on appelle un bad buzz."
+        },
+        {
+            q: "Une entreprise investit dans des influenceurs, des réseaux sociaux, des publicités en ligne et son site Internet. Après plusieurs mois, elle possède beaucoup plus d'abonnés et de vues, mais ses ventes n'ont presque pas évolué. Le responsable marketing affirme : « Notre stratégie digitale fonctionne : nous avons beaucoup plus de visibilité. » Quelle réponse est la plus pertinente ?",
+            options: [
+                "Oui, car la visibilité est le résultat final recherché par toute entreprise.",
+                "Oui, car une augmentation des abonnés entraîne nécessairement une augmentation des ventes.",
+                "Pas forcément : la visibilité est un moyen, mais l'entreprise doit vérifier si sa stratégie contribue réellement à ses objectifs.",
+                "Non, car le marketing digital doit uniquement servir à vendre directement un produit."
+            ],
+            correct: 2,
+            explanation: "La visibilité n'est pas une finalité unique du marketing digital. Selon l'entreprise, les objectifs peuvent être de développer la notoriété, attirer une cible, générer des prospects, fidéliser les clients ou augmenter les ventes. L'important est de vérifier si les actions digitales contribuent réellement aux objectifs fixés."
+        }
+    ]
+},
+crypto: {
+    title: "Crypto & Blockchain",
+    iconClass: "fa-bitcoin",
+    questions: [
+        {
+            q: "Parmi ces propositions, laquelle est de la crypto-monnaie ?",
+            options: [
+                "PayPal",
+                "Bitcoin",
+                "Visa",
+                "Apple Pay"
+            ],
+            correct: 1,
+            explanation: "Le Bitcoin est une crypto-monnaie. PayPal, Visa et Apple Pay sont des services ou moyens de paiement qui permettent notamment d'utiliser des monnaies classiques."
+        },
+        {
+            q: "Qu'est-ce qu'une blockchain ?",
+            options: [
+                "Un réseau social",
+                "Une banque en ligne",
+                "Un registre numérique qui enregistre des transactions",
+                "Une application de paiement"
+            ],
+            correct: 2,
+            explanation: "Une blockchain est une sorte de registre numérique partagé. Dans le cas du Bitcoin, elle permet notamment d'enregistrer les transactions effectuées."
+        },
+        {
+            q: "Pourquoi le prix du Bitcoin peut-il changer rapidement ?",
+            options: [
+                "Parce que son prix est fixé par une banque",
+                "Parce qu'il dépend notamment de l'offre et de la demande",
+                "Parce qu'il change automatiquement chaque jour",
+                "Parce que tous les pays décident de son prix"
+            ],
+            correct: 1,
+            explanation: "Comme pour beaucoup d'actifs, le prix peut évoluer en fonction de l'offre et de la demande. Le Bitcoin est particulièrement volatile, ce qui signifie que son prix peut fortement monter ou descendre."
+        },
+        {
+            q: "Comment peut-on conserver et gérer des cryptomonnaies ?",
+            options: [
+                "Avec un portefeuille numérique appelé « wallet »",
+                "Avec une carte Vitale",
+                "Dans un compte Instagram",
+                "Dans une boîte aux lettres"
+            ],
+            correct: 0,
+            explanation: "Un wallet (portefeuille numérique) permet notamment de gérer les clés qui donnent accès aux crypto-actifs. Il peut être sous forme d'application, d'appareil physique ou d'autres solutions."
+        },
+        {
+            q: "Qui est associé à la création du Bitcoin ?",
+            options: [
+                "Elon Musk",
+                "Satoshi Nakamoto",
+                "Bill Gates",
+                "Mark Zuckerberg"
+            ],
+            correct: 1,
+            explanation: "Bitcoin a été présenté en 2008 par une personne ou un groupe utilisant le pseudonyme Satoshi Nakamoto. Son identité réelle n'est pas établie publiquement."
+        },
+        {
+            q: "Quelle est la principale différence entre l'euro et le Bitcoin ?",
+            options: [
+                "L'euro existe uniquement sur Internet",
+                "Le Bitcoin existe sous forme de pièces et de billets",
+                "L'euro est une monnaie officielle émise dans un cadre institutionnel, tandis que Bitcoin fonctionne sur un réseau décentralisé",
+                "Il n'y a aucune différence"
+            ],
+            correct: 2,
+            explanation: "L'euro est une monnaie officielle utilisée dans les pays de la zone euro et s'inscrit dans un système monétaire avec des banques centrales. Bitcoin fonctionne sur un réseau décentralisé et n'est pas émis par une banque centrale."
+        },
+        {
+            q: "« Toutes les cryptomonnaies sont anonymes. » Vrai ou faux ?",
+            options: [
+                "Vrai",
+                "Faux",
+                "Uniquement pour le Bitcoin",
+                "Uniquement pour les cryptomonnaies récentes"
+            ],
+            correct: 1,
+            explanation: "Sur certaines blockchains, comme celle de Bitcoin, les transactions sont visibles publiquement. Elles sont associées à des adresses numériques, et non directement à un nom et prénom. Cela ne signifie donc pas qu'elles sont totalement anonymes."
+        },
+        {
+            q: "« On peut perdre de l'argent en investissant dans une cryptomonnaie. » Vrai ou faux ?",
+            options: [
+                "Vrai",
+                "Faux",
+                "Uniquement si on revend trop rapidement",
+                "Uniquement avec le Bitcoin"
+            ],
+            correct: 0,
+            explanation: "Le prix des cryptomonnaies peut fortement varier. Si leur valeur baisse, une personne peut perdre une partie ou même la totalité de la somme investie."
+        },
+        {
+            q: "Ton ami te dit : « J'ai gagné 300 € avec le Bitcoin, donc toi aussi tu vas forcément gagner de l'argent ! » Que lui réponds-tu ?",
+            options: [
+                "« Oui, je vais investir tout mon argent ! »",
+                "« Si tu as gagné, je vais forcément gagner aussi. »",
+                "« Ton expérience ne garantit pas que je gagnerai aussi. Il y a un risque de perte. »",
+                "« Le Bitcoin garantit toujours des bénéfices. »"
+            ],
+            correct: 2,
+            explanation: "Le fait qu'une personne ait gagné de l'argent ne signifie pas que tout le monde gagnera. Les performances passées ne garantissent pas les résultats futurs et les crypto-actifs comportent des risques."
+        },
+        {
+            q: "Tu reçois un message : « Félicitations ! Tu as gagné 1 Bitcoin. Pour le récupérer, envoie-nous d'abord 100 € et ton mot de passe. » Que fais-tu ?",
+            options: [
+                "J'envoie immédiatement les informations",
+                "Je demande à mes amis de faire pareil",
+                "Je vérifie l'information et je ne donne surtout pas mon mot de passe",
+                "J'envoie 200 € pour recevoir deux Bitcoins"
+            ],
+            correct: 2,
+            explanation: "C'est un signal d'alerte. Une demande de mot de passe ou d'argent pour « débloquer » un gain peut être une tentative d'arnaque ou de phishing. Il ne faut jamais communiquer ses mots de passe ou ses clés privées."
+        }
+    ]
+},
             data: {
-                title: "Données & Vie Privée",
-                iconClass: "fa-user-shield",
-                questions: [
-                    {
-                        q: "Que signifie le sigle RGPD ?",
-                        options: [
-                            "Règlement Général sur la Protection des Données",
-                            "Réseau Global de Protection Digitale",
-                            "Registre Général des Profils Déclarés",
-                            "Règlement de Gestion Privée des Documents"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Qu'est-ce qu'un 'Cookie' informatique ?",
-                        options: [
-                            "Un biscuit virtuel à gagner sur les jeux",
-                            "Un petit fichier texte déposé sur votre appareil pour mémoriser vos préférences",
-                            "Un logiciel de nettoyage de disque",
-                            "Une erreur de serveur web"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que le 'Phishing' (Hameçonnage) ?",
-                        options: [
-                            "Un jeu vidéo de pêche en ligne",
-                            "Une technique frauduleuse pour vous voler des mots de passe ou données bancaires",
-                            "Une méthode de recherche sur Google",
-                            "Un nettoyage automatique de boîte mail"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Quelle est la meilleure règle pour créer un mot de passe solide ?",
-                        options: [
-                            "Utiliser '123456' ou sa date de naissance",
-                            "Mélanger lettres majuscules/minuscules, chiffres et symboles",
-                            "Utiliser le même mot de passe partout",
-                            "Écrire son mot de passe sur un post-it collé à l'écran"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "À quoi sert la 'Double Authentification' (2FA) ?",
-                        options: [
-                            "À payer deux fois sa facture",
-                            "À ajouter une étape de sécurité supplémentaire (ex: code reçu par SMS)",
-                            "À créer deux comptes en même temps",
-                            "À diviser par deux le temps de connexion"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "En France, quelle autorité veille à la protection des données personnelles ?",
-                        options: ["La CNIL", "L'Arcep", "La SACEM", "L'HADOPI"],
-                        correct: 0
-                    },
-                    {
-                        q: "Qu'est-ce que l'Empreinte Numérique ?",
-                        options: [
-                            "L'empreinte digitale pour déverrouiller son smartphone",
-                            "L'ensemble des traces laissées en ligne par nos activités et recherches",
-                            "Le poids total d'un disque dur",
-                            "La vitesse de connexion de sa box internet"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Que garantit la présence d'un cadenas et du protocole 'HTTPS' sur un site web ?",
-                        options: [
-                            "Que le site est totalement gratuit",
-                            "Que la connexion entre votre navigateur et le site est sécurisée et cryptée",
-                            "Que le site appartient au gouvernement",
-                            "Que les produits sont livrés sous 24h"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Pourquoi faut-il se méfier des réseaux Wi-Fi publics non sécurisés ?",
-                        options: [
-                            "Ils font griller la batterie",
-                            "Des pirates peuvent intercepter vos informations personnelles en transit",
-                            "Ils font perdre les photos enregistrées",
-                            "Ils modifient la langue du smartphone"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "À quoi sert un VPN (Virtual Private Network) ?",
-                        options: [
-                            "À accélérer le téléchargement des films",
-                            "À chiffrer sa connexion et masquer son adresse IP",
-                            "À bloquer les appels téléphoniques inconnus",
-                            "À augmenter le stockage iCloud"
-                        ],
-                        correct: 1
-                    }
-                ]
-            },
+    title: "Données & Sécurité",
+    iconClass: "fa-database",
+    questions: [
+        {
+            q: "Laquelle de ces informations est une donnée personnelle ?",
+            options: [
+                "La couleur du ciel",
+                "Ton prénom et ton nom",
+                "La température extérieure",
+                "La date de sortie d'un film"
+            ],
+            correct: 1,
+            explanation: "Une donnée personnelle est une information qui permet d'identifier directement ou indirectement une personne. Le nom, le prénom, l'adresse, le numéro de téléphone ou encore une photo peuvent être des données personnelles."
+        },
+        {
+            q: "Que peut faire une application avec les données que tu lui as autorisées à utiliser ?",
+            options: [
+                "Les utiliser uniquement pour décorer l'application",
+                "Les utiliser pour certaines fonctionnalités ou certains services",
+                "Les supprimer automatiquement après 1 minute",
+                "Les rendre toujours publiques"
+            ],
+            correct: 1,
+            explanation: "Une application peut avoir besoin de certaines données pour fonctionner. Par exemple, une application de GPS a besoin de ta localisation pour te guider."
+        },
+        {
+            q: "Quel mot désigne le fait de récupérer des informations sur quelqu'un pour lui envoyer des publicités adaptées ?",
+            options: [
+                "Le ciblage publicitaire",
+                "Le piratage obligatoire",
+                "Le téléchargement",
+                "Le streaming"
+            ],
+            correct: 0,
+            explanation: "Les sites et applications peuvent utiliser certaines informations sur leurs utilisateurs pour personnaliser les publicités qu'ils leur montrent."
+        },
+        {
+            q: "Laquelle de ces informations doit particulièrement rester secrète ?",
+            options: [
+                "Ta couleur préférée",
+                "Ton plat préféré",
+                "Ton mot de passe",
+                "Ton film préféré"
+            ],
+            correct: 2,
+            explanation: "Un mot de passe doit rester secret. Le partager peut permettre à quelqu'un d'accéder à ton compte et à tes informations personnelles."
+        },
+        {
+            q: "Pourquoi faut-il éviter d'utiliser le même mot de passe partout ?",
+            options: [
+                "Parce qu'il devient plus difficile à retenir",
+                "Parce que si un compte est piraté, les autres peuvent aussi être en danger",
+                "Parce qu'un mot de passe ne fonctionne qu'une seule fois",
+                "Parce que les applications l'interdisent toujours"
+            ],
+            correct: 1,
+            explanation: "Si le même mot de passe est utilisé sur plusieurs comptes et qu'un site est victime d'une fuite de données, un pirate peut essayer ce mot de passe sur tes autres comptes."
+        },
+        {
+            q: "Quel comportement protège le mieux tes données personnelles ?",
+            options: [
+                "Donner son mot de passe à son meilleur ami",
+                "Accepter toutes les autorisations sans les lire",
+                "Utiliser des mots de passe différents et réfléchir avant de partager ses informations",
+                "Publier son adresse sur les réseaux sociaux"
+            ],
+            correct: 2,
+            explanation: "Il est important de limiter les informations que l'on partage, de sécuriser ses comptes et de réfléchir avant de publier quelque chose en ligne."
+        },
+        {
+            q: "« Une photo de toi publiée sur Internet peut être une donnée personnelle. » Vrai ou faux ?",
+            options: [
+                "Vrai",
+                "Faux",
+                "Uniquement si la photo est publiée sur Instagram",
+                "Uniquement si la photo est prise par un professionnel"
+            ],
+            correct: 0,
+            explanation: "Une photo permettant de reconnaître une personne peut constituer une donnée personnelle. Il faut donc réfléchir avant de publier des photos de soi ou des autres."
+        },
+        {
+            q: "« Supprimer une publication signifie qu'elle disparaît forcément immédiatement et définitivement d'Internet. » Vrai ou faux ?",
+            options: [
+                "Vrai",
+                "Faux",
+                "Uniquement sur les réseaux sociaux",
+                "Uniquement si personne ne l'a vue"
+            ],
+            correct: 1,
+            explanation: "Une publication peut avoir été enregistrée, copiée ou capturée par quelqu'un avant sa suppression. C'est pourquoi il vaut mieux réfléchir avant de publier."
+        },
+        {
+            q: "Une application de quiz te demande l'accès à ta localisation, à ton micro et à tes contacts. Tu n'en comprends pas l'utilité. Que fais-tu ?",
+            options: [
+                "J'accepte tout pour pouvoir jouer",
+                "Je vérifie les autorisations et je refuse celles qui ne sont pas nécessaires",
+                "Je donne aussi mon mot de passe",
+                "Je désinstalle immédiatement mon téléphone"
+            ],
+            correct: 1,
+            explanation: "Certaines applications demandent des autorisations qui ne sont pas toujours nécessaires à leur fonctionnement. Il est préférable de vérifier ce qui est demandé et de n'autoriser que ce qui est utile."
+        },
+        {
+            q: "Ton ami veut publier une photo de toi sur un réseau social, mais tu ne veux pas qu'elle soit publiée. Que peux-tu faire ?",
+            options: [
+                "Rien, puisqu'il a pris la photo",
+                "Lui demander de ne pas la publier ou de la supprimer",
+                "Lui donner ton mot de passe pour qu'il la retire",
+                "Créer un faux compte pour la supprimer"
+            ],
+            correct: 1,
+            explanation: "Une photo de toi peut être une donnée personnelle. Tu peux demander à ton ami de ne pas la publier ou de la retirer. Le fait d'avoir pris une photo ne signifie pas automatiquement qu'on peut la publier comme on veut."
+        }
+    ]
+},
             ecommerce: {
-                title: "E-commerce",
-                iconClass: "fa-cart-shopping",
-                questions: [
-                    {
-                        q: "Qu'est-ce qu'un 'Dark Pattern' en e-commerce ?",
-                        options: [
-                            "Le mode nuit du site marchand",
-                            "Une interface conçue pour tromper ou inciter l'utilisateur à acheter involontairement",
-                            "Un produit d'occasion vendu sans garantie",
-                            "Une erreur de code d'affichage"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que le 'Dropshipping' ?",
-                        options: [
-                            "Livrer des colis par drone",
-                            "Vendre un produit dont le vendeur ne possède pas le stock (livré directement par le fournisseur)",
-                            "Bénéficier de remises immédiates en caisse",
-                            "Acheter des produits par lots"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'une 'Marketplace' (Place de marché) ?",
-                        options: [
-                            "Un marché de fruits et légumes local",
-                            "Une plateforme qui permet à des vendeurs tiers de vendre leurs produits (ex: Amazon)",
-                            "Un logiciel de comptabilité",
-                            "Un magasin physique éphémère"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Que désigne l'Abandon de Panier ?",
-                        options: [
-                            "Oublier un sac de courses au supermarché",
-                            "Ajouter des produits dans son panier en ligne puis quitter le site sans payer",
-                            "Supprimer son compte client",
-                            "Demander le remboursement d'un article"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "En France, quel est le délai légal minimum de rétractation pour un achat en ligne ?",
-                        options: ["2 jours", "14 jours", "30 jours", "Aucun droit de rétractation"],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que le Retargeting (Ciblage publicitaire) ?",
-                        options: [
-                            "Afficher des pubs pour un produit que vous avez consulté précédemment sur d'autres sites",
-                            "Envoyer des SMS à toute la ville",
-                            "Bloquer la pub sur YouTube",
-                            "Offrir une carte de fidélité automatique"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Comment s'assurer de la fiabilité d'un site marchand inconnu ?",
-                        options: [
-                            "Vérifier les mentions légales, l'adresse, les avis clients et le cadenas HTTPS",
-                            "Regarder uniquement si les prix sont très bas",
-                            "Se fier uniquement au logo affiché en haut de page",
-                            "Il n'existe aucun moyen de vérifier"
-                        ],
-                        correct: 0
-                    },
-                    {
-                        q: "Pourquoi est-il important de consulter plusieurs avis clients vérifiés ?",
-                        options: [
-                            "Pour apprendre l'orthographe des clients",
-                            "Pour éviter les faux avis positifs et évaluer la vraie qualité du produit/service",
-                            "Pour connaître le nom des livreurs",
-                            "Pour gagner des réductions"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce qu'une 'Vente Flash' ?",
-                        options: [
-                            "Une vente d'appareils photo",
-                            "Une promotion très avantageuse proposée pendant une durée très limitée",
-                            "Une vente réservée aux professionnels",
-                            "Une vente réalisée en direct sur TikTok"
-                        ],
-                        correct: 1
-                    },
-                    {
-                        q: "Qu'est-ce que le 'Click & Collect' ?",
-                        options: [
-                            "Cliquer sur une pub puis recevoir un appel",
-                            "Commander en ligne puis récupérer son produit directement en magasin",
-                            "Payer par carte sans contact",
-                            "Consulter un catalogue papier"
-                        ],
-                        correct: 1
-                    }
-                ]
-            }
+
+    title: "E-commerce",
+
+    iconClass: "fa-cart-shopping",
+
+    questions: [
+
+        {
+            q: "Qu'est-ce qu'un site e-commerce ?",
+            options: [
+                "Un site permettant uniquement de comparer des prix",
+                "Un réseau social consacré aux marques",
+                "Un site permettant d'acheter des produits ou services en ligne",
+                "Une application bancaire"
+            ],
+            correct: 2,
+            explanation: "Un site e-commerce est un site Internet qui permet d'acheter et de vendre des produits ou des services en ligne."
+        },
+
+        {
+            q: "Qu'est-ce que le 'Dropshipping' ?",
+            options: [
+                "Livrer des colis par drone",
+                "Vendre un produit dont le vendeur ne possède pas le stock (livré directement par le fournisseur)",
+                "Bénéficier de remises immédiates en caisse",
+                "Acheter des produits par lots"
+            ],
+            correct: 1,
+            explanation: "En dropshipping, le vendeur ne stocke pas lui-même les produits : la commande est directement expédiée au client par le fournisseur."
+        },
+
+        {
+            q: "Qu'est-ce qu'une 'Marketplace' (Place de marché) ?",
+            options: [
+                "Un marché de fruits et légumes local",
+                "Une plateforme qui permet à des vendeurs tiers de vendre leurs produits (ex: Amazon)",
+                "Un logiciel de comptabilité",
+                "Un magasin physique éphémère"
+            ],
+            correct: 1,
+            explanation: "Une marketplace met en relation des vendeurs et des acheteurs sur une même plateforme, comme Amazon ou certaines autres places de marché en ligne."
+        },
+
+        {
+            q: "Que désigne l'Abandon de Panier ?",
+            options: [
+                "Oublier un sac de courses au supermarché",
+                "Ajouter des produits dans son panier en ligne puis quitter le site sans payer",
+                "Supprimer son compte client",
+                "Demander le remboursement d'un article"
+            ],
+            correct: 1,
+            explanation: "L'abandon de panier se produit lorsqu'un utilisateur ajoute des produits à son panier mais quitte le site avant de finaliser son achat."
+        },
+
+        {
+    q: "Pourquoi un site e-commerce peut-il afficher des produits similaires à ceux que tu viens de consulter ?",
+
+    options: [
+        "Parce que tous les visiteurs voient exactement les mêmes produits",
+        "Parce que ton téléphone choisit les produits à ta place",
+        "Grâce à la personnalisation basée sur les données liées à ta navigation",
+        "Parce que les produits sont automatiquement moins chers"
+    ],
+
+    correct: 2,
+
+    explanation: "La personnalisation permet à un site e-commerce d'utiliser les données liées à ta navigation pour te proposer des produits susceptibles de t'intéresser."
+},
+
+        {
+            q: "Qu'est-ce que le Retargeting (Ciblage publicitaire) ?",
+            options: [
+                "Afficher des pubs pour un produit que vous avez consulté précédemment sur d'autres sites",
+                "Envoyer des SMS à toute la ville",
+                "Bloquer la pub sur YouTube",
+                "Offrir une carte de fidélité automatique"
+            ],
+            correct: 0,
+            explanation: "Le retargeting consiste à afficher à nouveau des publicités à un utilisateur après qu'il a déjà consulté un produit ou un site."
+        },
+
+        {
+            q: "Comment s'assurer de la fiabilité d'un site marchand inconnu ?",
+            options: [
+                "Vérifier les mentions légales, l'identité du vendeur, les coordonnées, les avis et les conditions de vente",
+                "Regarder uniquement si les prix sont très bas",
+                "Se fier uniquement au logo affiché en haut de page",
+                "Il n'existe aucun moyen de vérifier"
+            ],
+            correct: 0,
+            explanation: "Vérifier les mentions légales, l'identité du vendeur, les coordonnées, les avis et les conditions de vente permet de mieux évaluer la fiabilité d'un site marchand."
+        },
+
+        {
+            q: "Pourquoi est-il important de consulter plusieurs avis clients vérifiés ?",
+            options: [
+                "Pour apprendre l'orthographe des clients",
+                "Pour gagner des réductions",
+                "Pour connaître le nom des livreurs",
+                "Pour éviter les faux avis positifs et évaluer la vraie qualité du produit/service"
+            ],
+            correct: 3,
+            explanation: "Consulter plusieurs avis vérifiés permet de comparer les expériences des clients et d'avoir une vision plus fiable de la qualité du produit ou du service."
+        },
+
+        {
+            q: "Qu'est-ce qu'une 'Vente Flash' ?",
+            options: [
+                "Une vente d'appareils photo",
+                "Une promotion très avantageuse proposée pendant une durée très limitée",
+                "Une vente réservée aux professionnels",
+                "Une vente réalisée en direct sur TikTok"
+            ],
+            correct: 1,
+            explanation: "Une vente flash est une promotion proposée pendant une durée limitée, souvent pour encourager les clients à acheter rapidement."
+        },
+
+        {
+            q: "Qu'est-ce que le 'Click & Collect' ?",
+            options: [
+                "Cliquer sur une pub puis recevoir un appel",
+                "Payer par carte sans contact",
+                "Commander en ligne puis récupérer son produit directement en magasin",
+                "Consulter un catalogue papier"
+            ],
+            correct: 2,
+            explanation: "Le Click & Collect permet de commander un produit en ligne puis de le récupérer directement dans un magasin ou un point de retrait."
+        }
+
+    ]
+}
         };
 
         function setTeam(teamNum) {
@@ -796,9 +901,10 @@
 
             currentQuestions = [...category.questions].sort(() => Math.random() - 0.5);
             currentQuestionIdx = 0;
-            score = 0;
-            timerSeconds = 600;
-            gameActive = true;
+score = 0;
+timerSeconds = 600;
+playerAnswers = [];
+gameActive = true;
 
             document.getElementById('game-theme-icon').className = `fa-solid ${category.iconClass}`;
             document.getElementById('game-theme-title').innerText = category.title;
@@ -902,27 +1008,38 @@
         }
 
         function handleAnswer(selectedIndex) {
-            if (!gameActive) return;
+    if (!gameActive) return;
 
-            const qData = currentQuestions[currentQuestionIdx];
-            if (selectedIndex === qData.correct) {
-                score++;
-            }
+    const qData = currentQuestions[currentQuestionIdx];
+    const isCorrect = selectedIndex === qData.correct;
 
-            currentQuestionIdx++;
+    playerAnswers.push({
+        question: qData.q,
+        selectedAnswer: qData.options[selectedIndex],
+        correctAnswer: qData.options[qData.correct],
+        isCorrect: isCorrect,
+        explanation: qData.explanation || "Cette réponse permet de comprendre la notion abordée dans cette question."
+    });
 
-            if (currentQuestionIdx < currentQuestions.length) {
-                renderQuestion();
-            } else {
-                endQuiz();
-            }
-        }
+    if (isCorrect) {
+        score++;
+    }
+
+    currentQuestionIdx++;
+
+    if (currentQuestionIdx < currentQuestions.length) {
+        renderQuestion();
+    } else {
+        endQuiz();
+    }
+}
 
         function endQuiz() {
     gameActive = false;
     clearInterval(timerInterval);
 
     const timeUsed = 600 - Math.max(0, timerSeconds);
+    renderCorrections();
 
     document.getElementById('view-game').classList.add('hidden');
     document.getElementById('view-result').classList.remove('hidden');
@@ -943,6 +1060,54 @@
             origin: { y: 0.6 }
         });
     }
+}
+function renderCorrections() {
+    const container = document.getElementById('correction-container');
+
+    if (!container) return;
+
+    container.innerHTML = `
+        <h3 class="text-xl font-pop font-bold text-cherryRed mb-4">
+            Correction des 10 questions
+        </h3>
+    `;
+
+    playerAnswers.forEach((answer, index) => {
+        const card = document.createElement('div');
+
+        card.className = `p-4 rounded-xl border-2 ${
+            answer.isCorrect
+                ? 'border-green-500 bg-green-50'
+                : 'border-red-400 bg-red-50'
+        }`;
+
+        card.innerHTML = `
+            <div class="font-pop font-bold text-slate-800 mb-2">
+                Question ${index + 1}
+            </div>
+
+            <div class="font-semibold text-slate-800 mb-3">
+                ${answer.question}
+            </div>
+
+            <div class="text-sm mb-2">
+                <strong>Ta réponse :</strong>
+                ${answer.selectedAnswer}
+            </div>
+
+            <div class="text-sm mb-2">
+                <strong>Bonne réponse :</strong>
+                ${answer.correctAnswer}
+            </div>
+
+            <div class="text-sm text-slate-600">
+                <strong>Explication :</strong>
+                ${answer.explanation}
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
 }
 
         function goToSetup() {
